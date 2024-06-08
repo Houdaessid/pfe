@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation d'Hébergement</title>
+    <link rel="icon" type="image/ico" href="{% static 'images/logo.ico' %}">
+    <link href='https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css' rel='stylesheet'>
+</head>
+<style>
+    /* styles.css */
+
+    /* Style pour le titre */
+    h1 {
+        color: #127d8f; /* Couleur du texte */
+        text-align: center; /* Centrage du texte */
+    }
+    .container{
+        padding-left: 300px;
+        padding-bottom: 100%;
+    }
+    .wrapper {
+        width: 90%; /* Réduire la largeur pour ajouter de l'espace sur les côtés */
+        margin: 20px auto; /* Marge automatique en haut et en bas, et sur les côtés gauche et droit */
+        padding: 20px; /* Ajouter du rembourrage à l'intérieur du wrapper */
+        background: #dadada;
+        border-radius: 10px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, .05);
+        overflow: hidden;
+    }
+
+    /* Style pour les champs de formulaire */
+    .myform input[type="text"],
+    .myform input[type="email"],
+    .myform input[type="date"],
+    .myform textarea,
+    .myform select {
+        width: 100%; /* Largeur du champ de formulaire */
+        padding: 10px; /* Espacement interne */
+        margin-bottom: 15px; /* Marge en bas */
+        border: 1px solid #ccc; /* Bordure */
+        border-radius: 5px; /* Coins arrondis */
+        box-sizing: border-box; /* Boîte de dimensionnement */
+    }
+
+    /* Style pour les boutons */
+    .myform input[type="submit"],
+    .myform input[type="reset"] {
+        width: 100%; /* Largeur du bouton */
+        padding: 10px; /* Espacement interne */
+        border: none; /* Suppression de la bordure */
+        border-radius: 5px; /* Coins arrondis */
+        cursor: pointer; /* Curseur en pointeur au survol */
+    }
+
+    .myform input[type="submit"] {
+        background-color: #007bff; /* Couleur de fond du bouton de soumission */
+        color: #fff; /* Couleur du texte du bouton de soumission */
+    }
+
+    .myform input[type="submit"]:hover {
+        background-color: #0056b3; /* Couleur de fond du bouton de soumission au survol */
+    }
+
+    .myform input[type="reset"] {
+        background-color: #6c757d; /* Couleur de fond du bouton de réinitialisation */
+        color: #fff; /* Couleur du texte du bouton de réinitialisation */
+    }
+
+    .myform input[type="reset"]:hover {
+        background-color: #5a6268; /* Couleur de fond du bouton de réinitialisation au survol */
+    }
+
+</style>
+<body>
+    {% block sidebar %} {% include 'sidebar.html' %} {% endblock sidebar %}
+    <div class="container">
+        <div class="wrapper">
+            <h1 class="mt-5">Réservation d'Hébergement</h1>
+            <form method="post" class="myform">
+                {% csrf_token %}
+                <div class="col-md-12 mb-3">
+                    {{ form.etablissement.label_tag }}
+                    {{ form.etablissement }}
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.Demandeur.label_tag }}
+                        {{ form.Demandeur }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.Courrier.label_tag }}
+                        {{ form.Courrier }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.DateEntre.label_tag }}
+                        {{ form.DateEntre }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.DateSortie.label_tag }}
+                        {{ form.DateSortie }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="PriseenCharge">{{ form.PriseenCharge.label_tag }}</label>
+                        <select id="PriseenCharge" name="PriseenCharge">
+                            <option value="" selected disabled></option>
+                            <option value="ira">Ira</option>
+                            <option value="interesse">Intéressé</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.Type.label_tag }}
+                        {{ form.Type }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="Moyen">{{ form.Moyen.label_tag }}</label>
+                        <select id="Moyen" name="Moyen">
+                            <option value="" selected disabled></option>
+                            <option value="Courrier">Courrier</option>
+                            <option value="téléphone">téléphone</option>
+                            <option value="Fax">Fax</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="Statut">{{ form.Statut.label_tag }}</label>
+                        <select id="Statut" name="Statut">
+                            <option value="" selected disabled></option>
+                            <option value="Confirmer">Confirmer</option>
+                            <option value="Annuler">Annuler</option>
+                            <option value="Ajourné">Ajourné</option>
+                            <option value="Reporter">Reporter</option>
+                            <option value="Prolonger">Prolonger</option>
+                            <option value="EnAttente">En Attente</option>
+                        </select>
+                    </div>
+                </div>
+                <table id="dynamic-table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Âge</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="name[]"></td>
+                            <td><input type="number" name="age[]"></td>
+                            <td><button type="button" class="add-row">+</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="submit">Soumettre</button>
+            </form>
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+    const table = document.getElementById('dynamic-table');
+    const addRowButton = document.querySelector('.add-row');
+
+    function addRow() {
+        const newRow = document.createElement('tr');
+
+        const nameCell = document.createElement('td');
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.name = 'name[]';
+        nameCell.appendChild(nameInput);
+        newRow.appendChild(nameCell);
+
+        const ageCell = document.createElement('td');
+        const ageInput = document.createElement('input');
+        ageInput.type = 'number';
+        ageInput.name = 'age[]';
+        ageCell.appendChild(ageInput);
+        newRow.appendChild(ageCell);
+
+        const actionCell = document.createElement('td');
+        const addActionBtn = document.createElement('button');
+        addActionBtn.type = 'button';
+        addActionBtn.className = 'add-row';
+        addActionBtn.textContent = '+';
+        addActionBtn.addEventListener('click', addRow);
+        actionCell.appendChild(addActionBtn);
+        newRow.appendChild(actionCell);
+
+        table.querySelector('tbody').appendChild(newRow);
+    }
+
+    addRowButton.addEventListener('click', addRow);
+});
+
+         </script>

@@ -169,8 +169,8 @@ $(document).ready(function(){
       </tr>
     </thead>
     <tbody>
-        {% if liste_chambre|length > 0 %}
-      {% for reshebergement in liste_chambre %}
+        {% if listeh|length > 0 %}
+      {% for reshebergement in listeh %}
       <tr>
         <td>{{ reshebergement.Courrier }}</td>
         <td>{{ reshebergement.etablissement }}</td>
@@ -183,24 +183,18 @@ $(document).ready(function(){
         <td>{{ reshebergement.Statut }}</td>
        
         <td>
-         
-          <a href="editt/" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-          <form action="{% url 'delete_reshebergement' reshebergement.idhebergement %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="delete" title="Delete" data-toggle="tooltip" style="border:none; background:none;">
-                <i class="material-icons" style="color:#E34724;">&#xE872;</i>
-            </button>
-        </form>
-      </td>
+            <a href="{% url 'codehebergement'%}" class="edit" title="Modifier" data-toggle="tooltip">
+                <i class="material-icons">&#xE254;</i>
+            </a>
+    </tr>
+    {% endfor %}
+      {% else %}
+      <tr>
+          <td colspan="12">Aucun enregistrement trouvé</td>
       </tr>
-      {% endfor %}
-        {% else %}
-        <tr>
-            <td colspan="12">Aucun enregistrement trouvé</td>
-        </tr>
-        {% endif %}
-    </tbody>
-  </table>
+      {% endif %}
+  </tbody>
+</table>
 </div>
 
 {% endblock content %} 

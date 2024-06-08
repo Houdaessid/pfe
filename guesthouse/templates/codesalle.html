@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation de Salle de Réunion</title>
+    <link rel="icon" type="image/ico" href="{% static 'images/logo.ico' %}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js" type="text/javascript"></script>
+    <style>
+        /* Your custom styles here */
+        h1 {
+            color: #127d8f;
+            text-align: center;
+        }
+        .container {
+            padding-left: 300px;
+            padding-bottom: 100%;
+        }
+        .wrapper {
+            width: 90%;
+            margin: 20px auto;
+            padding: 20px;
+            background: #dadada;
+            border-radius: 10px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, .05);
+            overflow: hidden;
+        }
+        .myform input[type="text"],
+        .myform input[type="email"],
+        .myform input[type="date"],
+        .myform textarea,
+        .myform select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .myform input[type="submit"],
+        .myform input[type="reset"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .myform input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .myform input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .myform input[type="reset"] {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        .myform input[type="reset"]:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    {% block sidebar %} {% include 'sidebar.html' %} {% endblock sidebar %}
+
+    <div class="container">
+        <div class="wrapper">
+            <h1 class="mt-5">Enregistrement de facture</h1>
+            <form method="post" class="myform" action="{% url 'codesalle' %}">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        {{ form.etablissement.label_tag }}
+                        {{ form.etablissement }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.demandeur.label_tag }}
+                        {{ form.demandeur }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.courrier.label_tag }}
+                        {{ form.courrier }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.dateEntrée.label_tag }}
+                        {{ form.dateEntrée }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.dateSortie.label_tag }}
+                        {{ form.dateSortie }}
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.codefacture.label_tag }}
+                    {{ form.codefacture }}
+                </div>
+                <input type="submit" id="reservationButton" value="Enregistrer">
+            </form>
+            {% if message %}
+                <div class="alert alert-success mt-3">
+                    {{ message }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+</body>
+</html>

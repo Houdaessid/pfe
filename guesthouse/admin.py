@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Role, Client, GuestHouseEvent, Hebergement, Restauration, Historique, Reshebergement, Ressalle, Salle
+from .models import Role, GuestHouseEvent, Hebergement, Historique, Reshebergement, Ressalle, Salle
 from django.utils.translation import gettext_lazy as _
 
 class RoleAdmin(admin.ModelAdmin):
@@ -17,17 +17,10 @@ class HebergementAdmin(admin.ModelAdmin):
     list_display = ('idchambre', 'numero', 'type', 'description', 'prix', 'maison', 'chambre', 'etage', 'local')
     search_fields = ('numero', 'type', 'maison')
 admin.site.register(Hebergement, HebergementAdmin)
-class RestaurationAdmin(admin.ModelAdmin):
-    list_display = ('idrestauration', 'type', 'prix')
-    search_fields = ('type',)
-admin.site.register(Restauration, RestaurationAdmin)
+
 
 class ReshebergementAdmin(admin.ModelAdmin):
-    list_display = (
-        'idhebergement', 'Courrier', 'etablissement', 'Demandeur', 'Capacite', 
-        'DateEntre', 'DateSortie', 'hebergement', 'PriseenCharge', 'Moyen', 
-        'Statut', 'Type'
-    )
+    list_display = ('idhebergement', 'Courrier', 'etablissement', 'Demandeur', 'Capacite', 'DateEntre', 'DateSortie', 'PriseenCharge', 'Moyen', 'Statut', 'Type')  # Removed 'hebergement'
     search_fields = ('Etablissement', 'Demandeur', 'Statut', 'Type')
     list_filter = ('DateEntre', 'DateSortie', 'hebergement', 'Statut')
 
@@ -47,7 +40,7 @@ class SalleAdmin(admin.ModelAdmin):
     search_fields = ('type', 'local')
 admin.site.register(Salle, SalleAdmin)
 admin.site.register(Historique)
-admin.site.register(Client)
+
 
 admin.site.site_title = _("Guesthouse")
 admin.site.site_header = _("Guesthouse")

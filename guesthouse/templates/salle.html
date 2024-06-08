@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation de Salle de Réunion</title>
     <link rel="icon" type="image/ico" href="{% static 'images/logo.ico' %}">
+    <script src="{% static 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js' %}" type="text/javascript"></script>
     <link href='https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css' rel='stylesheet'>
 </head>
 <style>
@@ -61,13 +62,16 @@
         background-color: #5a6268;
     }
 </style>
+    <script type="text/javascript"> document.getElementById('reservationButton').onclick = function() { document.getElementById('partyPooper').style.display = 'block'; };
+</script>
+
 <body>
     {% block sidebar %} {% include 'sidebar.html' %} {% endblock sidebar %}
     
     <div class="container">
         <div class="wrapper">
             <h1 class="mt-5">Réservation Salle de Réunion</h1>
-            <form method="post" class="myform">
+            <form  method="post" class="myform">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -194,30 +198,15 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <button type="submit" class="btn btn-primary">Valider la réservation</button>
-                    
+                        <button id="reservationButton" type="submit" class="btn btn-primary">Valider la réservation</button>
+                        <div id="partyPooper" style="display:none;">Party Pooper!</div> 
+                    </div>
+                    <div class="col-md-6 mb-3">
                         <button type="reset" class="btn btn-secondary">Annuler</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-
-    <script>
-        function toggleHebergement() {
-            var checkbox = document.getElementById('hebergement_checkbox');
-            var hebergementOptions = document.getElementById('hebergement_options');
-            if (checkbox.checked) {
-                hebergementOptions.style.display = 'block';
-            } else {
-                hebergementOptions.style.display = 'none';
-                // Réinitialiser les champs du formulaire d'hébergement
-                document.getElementById('id_chambre').value = '';
-                document.getElementById('id_nombrePersonneHebergement').value = '';
-                document.getElementById('id_dateEntreeHebergement').value = '';
-                document.getElementById('id_dateSortieHebergement').value = '';
-            }
-        }
-    </script>
 </body>
 </html>

@@ -130,21 +130,16 @@
         } 
      
     </style>
-<script>
-$(document).ready(function(){
-	$('[data-toggle="tooltip"]').tooltip();
-});
-</script>
+
 </head>
 <body>
-    {% block content %}
     {% block sidebar %} {% include 'sidebar.html' %} {% endblock sidebar %}
     <div class="container">
         <div class="table-responsive">
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-sm-8"><h2>Liste <b>Hébergement</b></h2></div>
+                        <div class="col-sm-8"><h2>Liste <b>Salle Réunion</b></h2></div>
                         <div class="col-sm-4">
                             <div class="search-box">
                                 <i class="material-icons">&#xE8B6;</i>
@@ -155,54 +150,50 @@ $(document).ready(function(){
                 </div>
                 <table class="table table-striped table-hover table-bordered">
                   <thead>
-      <tr>
-        <th scope="col">Courrier</th>
-        <th scope="col">Etablissement</th>
-        <th scope="col">Demandeur</th>
-        <th scope="col">Capacité</th>
-        <th scope="col">Entrée</th>
-        <th scope="col">Sortie</th>
-        <th scope="col">hebergement</th>
-        <th scope="col">Prise en Charge</th>
-        <th scope="col">Statut</th>
-        <th scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% if liste_chambre|length > 0 %}
-      {% for reshebergement in liste_chambre %}
-      <tr>
-        <td>{{ reshebergement.Courrier }}</td>
-        <td>{{ reshebergement.etablissement }}</td>
-        <td>{{ reshebergement.Demandeur }}</td>
-        <td>{{ reshebergement.Capacite }}</td>
-        <td>{{ reshebergement.DateEntre }}</td>
-        <td>{{ reshebergement.DateSortie }}</td>
-        <td>{{ reshebergement.hebergement }}</td>
-        <td>{{ reshebergement.PriseenCharge }}</td>
-        <td>{{ reshebergement.Statut }}</td>
-       
-        <td>
-         
-          <a href="editt/" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-          <form action="{% url 'delete_reshebergement' reshebergement.idhebergement %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="delete" title="Delete" data-toggle="tooltip" style="border:none; background:none;">
-                <i class="material-icons" style="color:#E34724;">&#xE872;</i>
-            </button>
-        </form>
-      </td>
-      </tr>
-      {% endfor %}
-        {% else %}
-        <tr>
-            <td colspan="12">Aucun enregistrement trouvé</td>
-        </tr>
-        {% endif %}
-    </tbody>
-  </table>
-</div>
-
-{% endblock content %} 
+                    <tr>
+                      <th scope="col">Courrier</th>
+                      <th scope="col">Etablissement</th>
+                      <th scope="col">Demandeur</th>
+                      <th scope="col">Entrée</th>
+                      <th scope="col">Sortie</th>
+                      <th scope="col">Salle</th>
+                      <th scope="col">N°Personne</th>
+                      <th scope="col">Déjeuner</th>
+                      <th scope="col">Pause Café</th>
+                      <th scope="col">Statut</th>
+                      <th scope="col">Actions</th> 
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if liste|length > 0 %}
+                    {% for ressalle in liste %}
+                    <tr>
+                      <td>{{ ressalle.courrier }}</td>
+                      <td>{{ ressalle.demandeur }}</td>
+                      <td>{{ ressalle.etablissement }}</td>
+                      <td>{{ ressalle.dateEntrée|date:"d/m/Y" }}</td>
+                      <td>{{ ressalle.dateSortie|date:"d/m/Y" }}</td>
+                      <td>{{ ressalle.Salle }}</td>
+                      <td>{{ ressalle.nombrePersonne }}</td>
+                      <td>{{ ressalle.dejeuner }}</td>
+                      <td>{{ ressalle.pauseCafe }}</td>
+                      <td>{{ ressalle.statut }}</td>
+                      <td>
+                        <a href="{% url 'codesalle'%}" class="edit" title="Modifier" data-toggle="tooltip">
+                            <i class="material-icons">&#xE254;</i>
+                        </a>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                      <td colspan="12">Aucune salle de réunion disponible</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table> 
+            </div></div></div>     
+    </div>    
+   
+    {% block content %} {% endblock %}
 </body>
 </html>

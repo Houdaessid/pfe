@@ -1,4 +1,5 @@
 
+from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
@@ -48,22 +49,20 @@ def salle_form_view(request):
         if form.is_valid():
             form.save()
             GuestHouseEvent.objects.create(
-                title=form.cleaned_data['etablissement'],
+                title=form.cleaned_data['etablissement'],#cleaned chniye fonction te3ha 
                 start_time=form.cleaned_data['dateEntrée'],  
                 end_time=form.cleaned_data['dateSortie'] 
             )
             return redirect('RessalleForm')
         else:
-         form = RessalleForm()
-        if 'dateEntrée' in request.GET and 'dateSortie' in request.GET:
-            dateEntrée = request.GET['dateEntrée']
-            dateSortie = request.GET['dateSortie']
-            # Filtrer les salles disponibles
-            salles_occupees = Ressalle.objects.filter(
-                Q(dateEntrée__lte=dateSortie) & Q(dateSortie__gte=dateEntrée)
-            ).values_list('salle', flat=True)
-            salles_disponibles = Salle.objects.exclude(id__in=salles_occupees)
-            form.fields['salle'].queryset = salles_disponibles
+       
+        
+        # Requête SQL brute pour obtenir les salles disponibles
+            salle.objects.raw(
+           'Select type from salle where type NOT IN (select salle from ressalle where '"+checkin+"' between dateEntrée and datesortie and '"+checkout+"' between dateEntrée and datesortie '
+            )
+        
+      
           
     return render(request, 'salle.html', {'form': form})
 
@@ -74,15 +73,71 @@ def home(request):
         role = Role.objects.filter(user=user).first()
         context = {'role': role}
     return render(request, 'home.html', context=context)
-
+@login_required(login_url='guesthouse/connexion/')
 def reservation(request):
-    return render(request, 'reservation.html')
-    
-def directeurs(request):
-    return render(request, 'directeurs.html')
+    user = request.user
 
+    try:
+        role = Role.objects.get(user=user)
+    except Role.DoesNotExist:
+        role = None
+
+
+    if role:
+        if role.is_chefreception:
+            show_all = True
+            show_lists = True
+            show_calendar=True
+        
+    return render(request, 'reservation.html', {
+        'show_all': show_all,
+        'show_lists': show_lists,
+        'show_calendar':show_calendar,
+    })
+
+@login_required(login_url='guesthouse/connexion/')
+def directeurs(request):
+    user = request.user
+
+    try:
+        role = Role.objects.get(user=user)
+    except Role.DoesNotExist:
+        role = None
+
+
+    if role:
+        if role.is_directeur :
+            show_calendar = True
+            
+    return render(request, 'directeurs.html', {
+        'show_calendar': show_calendar,
+      
+    })
+
+
+@login_required(login_url='guesthouse/connexion/')
 def payement(request):
-    return render(request, 'payement.html')
+    user = request.user
+
+    # Obtenir le rôle de l'utilisateur
+    try:
+        role = Role.objects.get(user=user)
+    except Role.DoesNotExist:
+        role = None
+        
+
+    if role:
+        if role.is_financier :
+            show_calendar = False
+            show_lists = False
+            show_flistefinancier=True
+            show_listefinancier=True
+    return render(request, 'payement.html', {
+        'show_calendar': show_calendar,
+        'show_lists': show_lists,
+        'show_flistefinancier':show_flistefinancier,
+        'show_listefinancier':show_listefinancier,
+    })
 
 def connexion(request):
     if request.method == 'POST':
@@ -102,7 +157,7 @@ def deconnexion(request):
     logout(request)
     return redirect('home')
 
-
+@login_required(login_url='guesthouse/connexion/')
 def hebergement_form_view(request):
     form = ReshebergementForm()  
     
@@ -112,50 +167,169 @@ def hebergement_form_view(request):
             form.save()
             GuestHouseEvent.objects.create(
                 title=form.cleaned_data['etablissement'],
-                start_time=form.cleaned_data['DateEntre'],  # Correct field name
+                start_time=form.cleaned_data['DateEntre'],  
                 end_time=form.cleaned_data['DateSortie'] 
             )
-
             return redirect('ReshebergementForm')
-    
+        else:
+         form = ReshebergementForm()
+        if 'dateEntrée' in request.GET and 'dateSortie' in request.GET:
+            dateEntrée = request.GET['dateEntrée']
+            dateSortie = request.GET['dateSortie']
+            # Filtrer les hebergement disponibles
+            hebergement_occupees = Ressalle.objects.filter(
+                Q(dateEntrée__lte=dateSortie) & Q(dateSortie__gte=dateEntrée)
+            ).values_list('hebergement', flat=True)
+            hebergement_disponibles = Hebergement.objects.exclude(id__in=hebergement_occupees)
+            form.fields['hebergement'].queryset = hebergement_disponibles
+          
     return render(request, 'hebergement.html', {'form': form})
-
+@login_required(login_url='guesthouse/connexion/')
+def listeh(request):
+    listeh= Reshebergement.objects.all()
+    return render(request, "listepayheb.html",{'listeh': listeh})
+@login_required(login_url='guesthouse/connexion/')
+def liste(request):
+    liste= Ressalle.objects.all()
+    return render(request, "listepaysall.html",{'liste': liste})
+@login_required(login_url='guesthouse/connexion/')
+def suivi(request):
+    suivi= Facture.objects.all()
+    return render(request, "suivipayement.html",{'suivi': suivi})
+@login_required(login_url='guesthouse/connexion/')
 def liste_attributs(request):
     liste_attributs = Ressalle.objects.all()
-    return render(request, "liste.html", {'liste_attributs': liste_attributs})
+    return render(request, "liste.html",{'liste_attributs': liste_attributs})
+
+@login_required(login_url='guesthouse/connexion/')
 def liste_chambre(request):
     liste_chambre = Reshebergement.objects.all()
     return render(request, "listehebergement.html", {'liste_chambre': liste_chambre})
+
+@login_required(login_url='guesthouse/connexion/')
 def delete_reshebergement(request, idhebergement):
     obj = get_object_or_404(Reshebergement, idhebergement=idhebergement)
     
     if request.method == "POST":
         obj.delete()
-        return redirect('liste_chambre')  # Utiliser le nom du pattern URL vers lequel vous souhaitez rediriger après la suppression
+        return redirect('liste_chambre')  
 
     return render(request, 'confirm.html', {'object': obj})
-def update(request):
-    obj=Ressalle.objects.get(idressalle=3)
-    form = RessalleForm(request.POST or None,instance=obj)  
-    messages = ''
 
-    if form.is_valid():
-        form.save()
-        form = RessalleForm()
-        messages = "modification avec succès"
-    
-    return render(request, 'edit.html', {'form': form, 'message': messages})
-
+@login_required(login_url='guesthouse/connexion/')
 def delete_ressalle(request, idressalle):
     obj = get_object_or_404(Ressalle, idressalle=idressalle)
     
     if request.method == "POST":
         obj.delete()
-        return redirect('liste_attribut')  # Utiliser le nom du pattern URL vers lequel vous souhaitez rediriger après la suppression
+        return redirect('liste_attributs') 
 
-    return render(request, 'confirm_delete.html', {'object': obj})
+    return render(request, 'confirm.html', {'object': obj})
+@login_required(login_url='guesthouse/connexion/')
+def modifier(request):
+    obj = Ressalle.objects.get(idressalle=8)
+    form = RessalleForm(request.POST or None, instance=obj)  
+    message = ''  # Renommé messages à message
+
+    if form.is_valid():
+        form.save()
+        form = RessalleForm()
+        message = "Modification avec succès"  # Modifié le message
+    
+    return render(request, 'edit.html', {'form': form, 'message': message})  
+@login_required(login_url='guesthouse/connexion/')
+def modification(request):
+    obj = Reshebergement.objects.get(idhebergement=6)
+    form = ReshebergementForm(request.POST or None, instance=obj)  
+    message = ''  # Renommé messages à message
+
+    if form.is_valid():
+        form.save()
+        form = ReshebergementForm()
+        message = "Modification avec succès"  # Modifié le message
+    
+    return render(request, 'editt.html', {'form': form, 'message': message}) 
+@login_required(login_url='guesthouse/connexion/')
+def codesalle(request):
+    form = ResSalleForm()  # Initialisation de la variable form
+    if request.method == 'POST':
+        form = ResSalleForm(request.POST)
+        if form.is_valid():
+            # Récupérez les données du formulaire
+            etablissement = form.cleaned_data['etablissement']
+            demandeur = form.cleaned_data['demandeur']
+            courrier = form.cleaned_data['courrier']
+            dateEntrée = form.cleaned_data['dateEntrée']
+            dateSortie = form.cleaned_data['dateSortie']
+            codefacture = form.cleaned_data['codefacture']
+
+           
+            facture = Facture.objects.create(
+                etablissement=etablissement,
+                demandeur=demandeur,
+                courrier=courrier,
+                dateEntrée=dateEntrée,
+                dateSortie=dateSortie,
+                codefacture=codefacture
+            )
+            
+            facture.save()
+            return redirect('codesalle')
+           
+    else:
+     
+        res_salle_data = Ressalle.objects.all().first()  
+
+        form = ResSalleForm(initial={'etablissement': res_salle_data.etablissement,
+                                     'demandeur': res_salle_data.demandeur,
+                                     'courrier': res_salle_data.courrier,
+                                     'dateEntrée': res_salle_data.dateEntrée,
+                                     'dateSortie': res_salle_data.dateSortie})
+
+    return render(request, 'codesalle.html', {'form': form})
 
 
+@login_required(login_url='guesthouse/connexion/')
+def codehebergement(request):
+    form = ResSalleForm()  # Initialisation de la variable form
+    if request.method == 'POST':
+        form = ResSalleForm(request.POST)
+        if form.is_valid():
+            # Récupérez les données du formulaire
+            etablissement = form.cleaned_data['etablissement']
+            demandeur = form.cleaned_data['demandeur']
+            courrier = form.cleaned_data['courrier']
+            dateEntre = form.cleaned_data['dateEntre']
+            dateSortie = form.cleaned_data['dateSortie']
+            codefacture = form.cleaned_data['codefacture']
+
+           
+            facture = Facture.objects.create(
+                etablissement=etablissement,
+                demandeur=demandeur,
+                courrier=courrier,
+                dateEntrée=dateEntre,
+                dateSortie=dateSortie,
+                codefacture=codefacture
+            )
+            
+            facture.save()
+            return redirect('codehebergement')
+           
+    else:
+     
+        res_salle_data = Reshebergement.objects.all().first()  
+
+        form = ResSalleForm(initial={'etablissement': res_salle_data.etablissement,
+                                     'Demandeur': res_salle_data.Demandeur,
+                                     'Courrier': res_salle_data.Courrier,
+                                     'DateEntre': res_salle_data.DateEntre,
+                                     'DateSortie': res_salle_data.DateSortie})
+
+    return render(request, 'codehebergement.html', {'form': form})
+
+
+@login_required(login_url='guesthouse/connexion/')
 def salle_view(request):
     form = SalleForm() 
     
@@ -167,6 +341,8 @@ def salle_view(request):
            
             return redirect('SalleForm')
     return render(request, 'ajoutSalle.html', {'form': form})
+
+@login_required(login_url='guesthouse/connexion/')
 def hebergement_view(request):
     form = HebergementForm()  
     
@@ -177,13 +353,15 @@ def hebergement_view(request):
             return redirect('HebergementForm')
     return render(request, 'ajoutChambre.html', {'form': form})
 
+@login_required(login_url='guesthouse/connexion/')
 def calendrier(request):  
     all_events = GuestHouseEvent.objects.all()
     context = {
         "event":all_events,
     }
     return render(request,'calendrier.html',context)
- 
+
+@login_required(login_url='guesthouse/connexion/')
 def all_events(request):                                                                                                 
     all_events = GuestHouseEvent.objects.all()
     print(f"all_events: {all_events}")
@@ -197,7 +375,7 @@ def all_events(request):
         })                                                                                                               
                                                                                                                       
     return JsonResponse(out, safe=False) 
- 
+@login_required(login_url='guesthouse/connexion/') 
 def add_event(request):
     start_time = request.GET.get("start", None)
     end_time = request.GET.get("end", None)
@@ -206,7 +384,7 @@ def add_event(request):
     event.save()
     data = {}
     return JsonResponse(data)
- 
+@login_required(login_url='guesthouse/connexion/')
 def update(request):
     start_time = request.GET.get("start", None)
     end_time= request.GET.get("end", None)
@@ -219,10 +397,12 @@ def update(request):
     event.save()
     data = {}
     return JsonResponse(data)
- 
+@login_required(login_url='guesthouse/connexion/')
 def remove(request):
     id = request.GET.get("id", None)
     event = GuestHouseEvent.objects.get(id=id)
     event.delete()
     data = {}
     return JsonResponse(data)
+
+

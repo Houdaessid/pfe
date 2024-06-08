@@ -133,14 +133,13 @@
 
 </head>
 <body>
-    {% block content %}
     {% block sidebar %} {% include 'sidebar.html' %} {% endblock sidebar %}
     <div class="container">
         <div class="table-responsive">
             <div class="table-wrapper">
                 <div class="table-title">
                     <div class="row">
-                        <div class="col-sm-8"><h2>Liste <b>Salle Réunion</b></h2></div>
+                        <div class="col-sm-8"><h2>Suivi payement</h2></div>
                         <div class="col-sm-4">
                             <div class="search-box">
                                 <i class="material-icons">&#xE8B6;</i>
@@ -153,42 +152,24 @@
                   <thead>
                     <tr>
                       <th scope="col">Courrier</th>
-                      <th scope="col"> Etablissement</th>
+                      <th scope="col">Etablissement</th>
                       <th scope="col">Demandeur</th>
                       <th scope="col">Entrée</th>
-                      <th scope="col">Sortie</th>
-                      <th scope="col">Salle</th>
-                      <th scope="col">N°Personne</th>
-                      <th scope="col">Déjeuner</th>
-                      <th scope="col">Pause Café</th>
-                      <th scope="col">Statut</th>
-                      <th scope="col">Actions</th> 
+                      <th scope="col">Sortie</th> 
+                      <th scope="col">Code Facture</th> 
                     </tr>
                   </thead>
                   <tbody>
-                    {% if liste_attributs|length > 0 %}
-                    {% for ressalle in liste_attributs %}
+                    {% if suivi|length > 0 %}
+                    {% for Facture in suivi %}
                     <tr>
-                      <td>{{ ressalle.courrier }}</td>
-                      <td>{{ ressalle.etablissement }}</td>
-                      <td>{{ ressalle.demandeur}}</td>
-                      <td>{{ ressalle.dateEntrée|date:"d/m/Y" }}</td>
-                      <td>{{ ressalle.dateSortie|date:"d/m/Y" }}</td>
-                      <td>{{ ressalle.Salle }}</td>
-                      <td>{{ ressalle.nombrePersonne }}</td>
-                      <td>{{ ressalle.dejeuner }}</td>
-                      <td>{{ ressalle.pauseCafe }}</td>
-                      <td>{{ ressalle.statut }}</td>
-                      <td>
-         
-                        <a href="edit/" class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
-                        <form action="{% url 'delete_ressalle' ressalle.idressalle %}" method="post" style="display:inline;">
-                          {% csrf_token %}
-                          <button type="submit" class="delete" title="Delete" data-toggle="tooltip" style="border:none; background:none;">
-                              <i class="material-icons" style="color:#E34724;">&#xE872;</i>
-                          </button>
-                      </form>
-                    </td>
+                      <td>{{ Facture.courrier }}</td>
+                      <td>{{ Facture.demandeur }}</td>
+                      <td>{{ Facture.etablissement }}</td>
+                      <td>{{ Facture.dateEntrée|date:"d/m/Y" }}</td>
+                      <td>{{ Facture.dateSortie|date:"d/m/Y" }}</td>
+                      <td>{{ Facture.codefacture }}</td>
+                      
                     </tr>
                     {% endfor %}
                     {% else %}
@@ -201,6 +182,6 @@
             </div></div></div>     
     </div>    
    
-    {% endblock content %} 
+    {% block content %} {% endblock %}
 </body>
 </html>

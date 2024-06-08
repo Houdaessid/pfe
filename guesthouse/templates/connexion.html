@@ -2,19 +2,32 @@
 <html lang="fr">
 {% load static %}
 <head>
-  
     <title>Connexion</title>
     <link rel="icon" type="image/ico" href="{% static 'images/logo.ico' %}">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background-color: #f4f4f4;
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        .bg {
+            /* L'image utilisée */
+            background-image: url('{% static "images/nn.png" %}');
+            /* Utilisez une hauteur de 100% */
+            height: 100%;
+            /* Centre et échelle l'image */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            /* Flexbox pour centrer le contenu */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .container {
             max-width: 400px;
-            margin: 50px auto;
             padding: 20px;
-            background-color: #fff;
+            background-color: rgba(255, 255, 255, 0.9); /* semi-transparent background */
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
@@ -25,23 +38,25 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2 class="text-center mb-4">Connexion</h2>
-        {% if error %}
-            <p class="error text-center">{{ error }}</p>
-        {% endif %}
-        <form method="post" action="{% url 'connexion' %}">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="username">Adresse Email:</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Mot de passe:</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
-        </form>
+    <div class="bg">
+        <div class="container">
+            <h2 class="text-center mb-4">Connexion</h2>
+            {% if error %}
+                <p class="error text-center">{{ error }}</p>
+            {% endif %}
+            <form method="post" action="{% url 'connexion' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Adresse Email:</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
